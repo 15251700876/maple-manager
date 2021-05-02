@@ -1,5 +1,6 @@
 package com.hanfeng.User.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hanfeng.User.dao.UserInfoDao;
@@ -89,5 +90,38 @@ public class UserInfoServiceImpl implements IUserInfoService {
         Page<UserInfo> page = PageHelper.startPage(query.getPageNum(), query.getPageSize());
         userInfoDao.queryAll(query.getQueryData() == null ? new UserInfo() : query.getQueryData());
         return PageBody.getPageBody(page);
+    }
+
+    @Override
+    public UserInfo queryUserByEmail(String email) {
+        QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("email", email);
+        UserInfo userInfo = userInfoDao.selectOne(wrapper);
+        if (userInfo == null || userInfo.getId() == null) {
+            return null;
+        }
+        return userInfo;
+    }
+
+    @Override
+    public UserInfo queryByPhoneNum(String phone) {
+        QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("phone", phone);
+        UserInfo userInfo = userInfoDao.selectOne(wrapper);
+        if (userInfo == null || userInfo.getId() == null) {
+            return null;
+        }
+        return userInfo;
+    }
+
+    @Override
+    public UserInfo queryByAccount(String account) {
+        QueryWrapper<UserInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("account", account);
+        UserInfo userInfo = userInfoDao.selectOne(wrapper);
+        if (userInfo == null || userInfo.getId() == null) {
+            return null;
+        }
+        return userInfo;
     }
 }

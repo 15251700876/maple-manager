@@ -1,10 +1,13 @@
 package com.hanfeng.User.controller;
 
+import com.google.gson.Gson;
 import com.hanfeng.User.entity.UserInfo;
 import com.hanfeng.User.service.IUserInfoService;
 import com.hanfeng.util.Result;
 import com.hanfeng.util.page.PageBody;
 import com.hanfeng.util.page.PageQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +21,13 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/user")
 public class UserInfoController {
+    @Resource
+    Gson gson;
+
+    /**
+     *
+     */
+    Logger logger = LoggerFactory.getLogger(UserInfoController.class);
     /**
      * 服务对象
      */
@@ -35,8 +45,14 @@ public class UserInfoController {
         return this.userInfoService.queryById(id);
     }
 
+    /**
+     * @param query
+     * @return
+     */
     @PostMapping("/listUserByPage")
     public Object queryUserByPage(@RequestBody PageQuery<UserInfo> query) {
+        Logger logger = LoggerFactory.getLogger(UserInfoController.class);
+        logger.info("listUserByPage参数：{}", gson.toJson(query));
         PageBody<UserInfo> body = userInfoService.queryAll(query);
         return Result.success(body);
 

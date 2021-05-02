@@ -66,5 +66,26 @@ public interface IUserInfoService {
      */
     public PageBody<UserInfo> queryAll(PageQuery<UserInfo> query);
 
+    /**
+     * 根据用户的邮箱查询用户是否存在
+     *
+     * @param email email
+     * @return userInfo
+     */
+    UserInfo queryUserByEmail(String email);
 
+    /**
+     * 根据用户的邮箱查询用户是否存在
+     *
+     * @param phone phone
+     * @return userInfo
+     */
+    UserInfo queryByPhoneNum(String phone);
+    /**
+     * 根据用户的邮箱查询用户是否存在
+     *
+     * @param account account
+     * @return userInfo
+     */
+    UserInfo queryByAccount(String account);
 }
