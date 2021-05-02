@@ -1,7 +1,6 @@
 package com.hanfeng.auth;
 
 import com.hanfeng.util.Constant;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
@@ -54,33 +53,31 @@ public class AuthSessionManager extends DefaultWebSessionManager {
      * @return sessionId
      */
     private Serializable getReferencedSessionId(ServletRequest request, ServletResponse response) {
-        String id = this.getSessionIdCookieValue(request, response);
-        if (StringUtils.isBlank(id)) {
-            if (request instanceof HttpServletRequest) {
-                HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-                id = httpServletRequest.getHeader(Constant.AUTHORIZATION);
-            }
+        String id = null;
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            id = httpServletRequest.getHeader(Constant.AUTHORIZATION);
+            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "header");
         }
-        if (id != null) {
-            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "cookie");
-        } else {
-            id = this.getUriPathSegmentParamValue(request, "JSESSIONID");
-            if (id == null) {
-                // 获取请求头中的session
-                id = WebUtils.toHttp(request).getHeader(Constant.AUTHORIZATION);
+        if (id == null) {
+            id = this.getSessionIdCookieValue(request, response);
+            if (id != null) {
+                request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "cookie");
+            } else {
+                id = this.getUriPathSegmentParamValue(request, "JSESSIONID");
                 if (id == null) {
+                    // 获取请求头中的session
                     String name = this.getSessionIdName();
                     id = request.getParameter(name);
                     if (id == null) {
                         id = request.getParameter(name.toLowerCase());
                     }
                 }
-            }
-            if (id != null) {
-                request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "header");
+                if (id != null) {
+                    request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "header");
+                }
             }
         }
-
         if (id != null) {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
